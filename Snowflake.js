@@ -1,17 +1,37 @@
+const drawLeg = (e, x, y, ang, length, width) => {
+  e.beginPath();
+  e.lineWidth = width;
+  e.lineCap = "round";
+  e.translate(x, y);
+  e.moveTo(0, 0);
+  e.rotate(ang);
+  e.lineTo(0, length);
+  e.stroke();
+  e.rotate(-ang);
+  e.translate(-x, -y);
+};
+
+const drawFlake = (e, x, y, r, n, color) => {
+  const angLeg = Math.PI * (2 / n);
+  e.strokeStyle = color;
+  for (let i = 0; i < n; i++) {
+    const leg = i * angLeg;
+    drawLeg(e, x, y, leg, r * 0.8, r * 0.07);
+  }
+};
+
 export class Snowflake {
   constructor() {
-    this.pos = {
-      x: Math.random() * screen.width,
-      y: Math.random() * -15,
-    };
+    this.pos = { x: Math.random() * 600, y: Math.random() - 11 };
     this.vel = { x: 0, y: 0 };
     this.acc = { x: 0, y: 0 };
     this.r = Math.random() * 2;
+    this.totalLegs = 3 + Math.floor(Math.random() * 6);
     this.mass = this.r * this.r * Math.PI;
   }
 
   offScreen() {
-    return this.pos.y > screen.height + this.r;
+    return this.pos.y > 600 + this.r;
   }
 
   applyForce(force) {
@@ -35,12 +55,6 @@ export class Snowflake {
   }
 
   render(e) {
-    e.fillStyle = "#FFF";
-    const point = (x, y) => {
-      e.beginPath();
-      e.arc(x, y, this.r * 3, 0, 2 * Math.PI);
-      e.fill();
-    };
-    point(this.pos.x, this.pos.y);
+    drawFlake(e, this.pos.x, this.pos.y, this.r * 5, this.totalLegs, "#FFF");
   }
 }
